@@ -50,6 +50,7 @@ fun ChatScreen(
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         }
     }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(key1 = lifecycleOwner){
         val observer = LifecycleEventObserver { _, event ->
@@ -65,6 +66,7 @@ fun ChatScreen(
         }
     }
     val state = viewModel.state.value
+    val reversedMessages = state.messages.reversed()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,12 +76,12 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            reverseLayout = true,
+            reverseLayout = true
         ){
             item {
                 Spacer(modifier = Modifier.height(32.dp))
             }
-            items(state.messages){
+            items(reversedMessages){
                 val isOwnMessage = it.userName == userName
                 Box(
                     contentAlignment = if (isOwnMessage){

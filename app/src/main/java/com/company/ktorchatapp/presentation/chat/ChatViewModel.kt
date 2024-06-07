@@ -43,10 +43,9 @@ class ChatViewModel @Inject constructor(
                 val result = chatSocketService.initSession(it)
                 when(result){
                     is Resource.Success ->{
-                        chatSocketService.observeMessage()
-                            .onEach {
+                        chatSocketService.observeMessage().onEach {newMessage ->
                                 val newList = state.value.messages.toMutableList().apply {
-                                    add(0, it)
+                                    add(newMessage)
                                 }
                                 _state.value = state.value.copy(messages = newList)
                             }.launchIn(viewModelScope)
@@ -78,8 +77,10 @@ class ChatViewModel @Inject constructor(
 
     fun sendMessage(){
         viewModelScope.launch {
-            if (messageText.value.isNotBlank()){
-                chatSocketService.sendMessage(messageText.value)
+            val message = messageText.value.trim()
+            if (message.isNotBlank()){
+                chatSocketService.sendMessage(message)
+                _messageText.value = ""
             }
         }
     }
